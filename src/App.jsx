@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
-import SearchBar from "./SearchBar"
+import SearchBar from "./components/SearchBar"
+import Spinner from "./components/Spinner";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -13,6 +14,14 @@ function App() {
   const [view, setView] = useState("search"); //'search' or 'favorites'
 
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY
+
+  // const ErrorMessage = ({message}) => {
+  //   return (
+  //     <div className="alert alert-error my-4">
+  //       <span className="bg-red-500 ">{message}</span>
+  //     </div>
+  //   )
+  // }
 
   useEffect(() => {
     // console.log(Object.keys(import.meta.env));
@@ -36,18 +45,21 @@ function App() {
         else {
           url = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&page=${page}`;
         }
-        const res = await fetch(url, {
-          headers: {
-            'Content-Type': "application/json",
-          },
-        } 
+        const res = await fetch(url);
+
+        // const res = await fetch(url, {
+        //   headers: {
+        //     'Content-Type': "application/json",
+        //   },
+        // } 
+        // -----------------------------------
         // {
         //   headers: {
         //     Authorization: `Bearer ${import.meta.env.VITE_TMDB_ACCESS_TOKEN}`,
         //     'Content-Type': 'application/json'
         //   }
         // }
-        );
+        // );
         
         if (!res.ok) throw new Error("Failed to fetch movies");
         const data = await res.json();
@@ -57,13 +69,14 @@ function App() {
       }
       catch (err) {
         setError("Failed to fetch movies.");
+        // setError({ErrorMessage});
       }
       finally {
         setLoading(false);
       }
     }
     fetchMovies();
-  }, [searchTerm, page, view])
+  }, [searchTerm, page, view, API_KEY])
 
   const handleSearch = (term) => {
     setSearchTerm(term)
@@ -98,6 +111,9 @@ function App() {
           <SearchBar onSearch={handleSearch} />
         </div>
       )}
+
+      {loading && <Spinner />}
+      
     </div>
   )
 }
