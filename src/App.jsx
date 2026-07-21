@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"
 import SearchBar from "./components/SearchBar"
 import Spinner from "./components/Spinner";
+import ErrorMessage from "./components/ErrorMessage";
+import MovieCard from "./components/MovieCard";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -14,14 +16,6 @@ function App() {
   const [view, setView] = useState("search"); //'search' or 'favorites'
 
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY
-
-  // const ErrorMessage = ({message}) => {
-  //   return (
-  //     <div className="alert alert-error my-4">
-  //       <span className="bg-red-500 ">{message}</span>
-  //     </div>
-  //   )
-  // }
 
   useEffect(() => {
     // console.log(Object.keys(import.meta.env));
@@ -69,7 +63,6 @@ function App() {
       }
       catch (err) {
         setError("Failed to fetch movies.");
-        // setError({ErrorMessage});
       }
       finally {
         setLoading(false);
@@ -82,6 +75,8 @@ function App() {
     setSearchTerm(term)
     setPage(1);
   }
+
+  const displayedMovies = movies;
 
   return (
     <div className="container mx-auto p-4 flex flex-col items-center text-center bg-blue-950 h-full">
@@ -113,9 +108,22 @@ function App() {
       )}
 
       {loading && <Spinner />}
-      
+      {error && <ErrorMessage message={error} />}
+      {!loading && !error && displayedMovies.length === 0 && (
+        <div>
+          No movies found.{" "}
+          {view === "favorites" ? "Add some to your favorites!" : "Try a different search."}
+        </div>
+      )}
+      {!loading && !error && displayedMovies.length > 0 && (
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
+          {displayedMovies.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} />
+          ))}
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
 export default App
