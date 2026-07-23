@@ -1,6 +1,6 @@
 // import React from 'react'
 
-const MovieCard = ({movie}) => {
+const MovieCard = ({ movie, onToggleFavorite, isFavorite }) => {
 
   const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : `https://via.placeholder.com/500x750?`;
 
@@ -20,7 +20,12 @@ const MovieCard = ({movie}) => {
         </p>
         <div className="flex gap-2">
           <button className="btn btn-sm btn-primary ">Details</button>
-          <button className="btn btn-sm">Add to Favorite</button>
+          <button 
+          className={`btn btn-sm ${isFavorite ? "btn-error" : "btn-secondary"}`}
+          onClick={() => onToggleFavorite(movie)}
+          >
+            {isFavorite ? "Remove" : "Favorite"}
+          </button>
         </div>
       </div>
     </div>
