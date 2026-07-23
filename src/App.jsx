@@ -7,6 +7,7 @@ import MovieCard from "./components/MovieCard";
 function App() {
   const [movies, setMovies] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [initialized, setInitialized] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -17,13 +18,27 @@ function App() {
 
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY
 
+  // Load favorites from local storage
+  useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setFavorites(storedFavorites);
+    setInitialized(true);
+  }, []);
+
+  // Set favorites to local storage
+  useEffect (() => {
+    if (initialized) {
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+    }
+  }, [favorites, initialized]);
+
   useEffect(() => {
     // console.log(Object.keys(import.meta.env));
     // console.log(import.meta.env.VITE_TMDB_API_KEY);
     // console.log(import.meta.env.VITE_TMDB_ACCESS_TOKEN);
     // console.log(import.meta.env);
     if (view === "favorites") {
-      setMovies([])
+      setMovies([]);
       return;
     }
 
@@ -76,10 +91,29 @@ function App() {
     setPage(1);
   }
 
-  const displayedMovies = movies;
+  const toggleFavorite = (movie) => {
+    const exists = favorites.some((f) => f.id === movie.id);
+    if (exists) {
+      setFavorites(favorites.filter((f) => f.id !== movie.id));
+    } else {
+      const favMovie = {
+        id: movie.id,
+        title: movie.title,
+        poster_path: movie.poster_path,
+        release_date: movie.overview,
+        overview: movie.overview,
+        vote_average: movie.vote_average
+      };
+      setFavorites([...favorites, favMovie])
+    }
+  }
+
+  const isFavorite = (movieId) => favorites.some((f) => f.id === movieId);
+
+  const displayedMovies = view === "search" ? movies : favorites;
 
   return (
-    <div className="container mx-auto p-4 flex flex-col items-center text-center bg-blue-950 h-full">
+    <div className=" mx-auto p-4 flex flex-col items-center text-center bg-blue-950 h-full">
       <nav className="flex justify-between w-full">
         <h1 className="text-4xl text-white font-extrabold mb-6 drop-shadow-2xl">Movie Hub</h1>
         <div className="tabs tabs-border mb-6 text-center">
@@ -96,7 +130,7 @@ function App() {
               setView("favorites")
             }}
           >
-          Favorites
+          Favorites ({favorites.length})
           </a>
         </div>
       </nav>
@@ -118,7 +152,7 @@ function App() {
       {!loading && !error && displayedMovies.length > 0 && (
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
           {displayedMovies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
+            <MovieCard key={movie.id} movie={movie} onToggleFavorite={toggleFavorite} isFavorite={isFavorite(movie.id)} />
           ))}
         </div>
       )}
