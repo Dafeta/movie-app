@@ -114,9 +114,9 @@ function App() {
 
   return (
     <div className=" mx-auto p-4 flex flex-col items-center text-center bg-blue-950 h-full">
-      <nav className="flex justify-between w-full">
-        <h1 className="text-4xl text-white font-extrabold mb-6 drop-shadow-2xl">Movie Hub</h1>
-        <div className="tabs tabs-border mb-6 text-center">
+      <nav className="flex flex-col md:flex-row items-center justify-between w-full md:mb-6">
+        <h1 className="text-2xl md:text-4xl text-white font-extrabold mb-4 md:mb-0 drop-shadow-2xl justify-center items-center">Movie Hub</h1>
+        <div className="tabs tabs-border text-center">
           <a className={`tab text-lg text-white ${view === "search" ? "tab-active" : ""}`}
             onClick={() => {
               setView("search");
