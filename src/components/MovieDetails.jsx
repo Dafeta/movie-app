@@ -2,7 +2,9 @@ import { useState } from "react";
 
 const MovieDetails = (props) => {
   return (
-    <div>MovieDetails</div>
+    <div>
+      <img src="" alt="" />
+    </div>
   )
 }
 
