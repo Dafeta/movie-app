@@ -172,14 +172,21 @@ function App() {
       {!loading && !error && displayedMovies.length > 0 && (
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
           {displayedMovies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} onToggleFavorite={toggleFavorite} isFavorite={isFavorite(movie.id)} />
+            <MovieCard key={movie.id} 
+            movie={movie} 
+            onToggleFavorite={toggleFavorite} 
+            isFavorite={isFavorite(movie.id)} 
+            onViewDetails={openModal} />
           ))}
         </div>
       )}
 
       {selectedMovie && (
         <div>
-          <MovieDetails movie={selectedMovie} onClose={closeModal} isFavorite={isFavorite(selectedMovie.id)} onToggleFavorite={toggleFavorite(selectedMovie)} />
+          <MovieDetails 
+          movie={selectedMovie} 
+          onClose={closeModal} 
+          isFavorite={isFavorite(selectedMovie.id)} onToggleFavorite={() => toggleFavorite(selectedMovie)} />
         </div>
       )}
     </div>
