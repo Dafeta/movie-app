@@ -19,7 +19,10 @@ const MovieCard = ({ movie, onToggleFavorite, isFavorite }) => {
           {movie.release_date ? movie.release_date.substring(0, 4) : "N/A"}
         </p>
         <div className="flex gap-2">
-          <button className="btn btn-sm btn-primary ">Details</button>
+          <button 
+          className="btn btn-sm btn-primary ">
+            Details
+          </button>
           <button 
           className={`btn btn-sm ${isFavorite ? "btn-error" : "btn-secondary"}`}
           onClick={() => onToggleFavorite(movie)}

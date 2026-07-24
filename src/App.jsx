@@ -3,6 +3,7 @@ import SearchBar from "./components/SearchBar"
 import Spinner from "./components/Spinner";
 import ErrorMessage from "./components/ErrorMessage";
 import MovieCard from "./components/MovieCard";
+import MovieDetails from "./components/MovieDetails";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -91,6 +92,24 @@ function App() {
     setPage(1);
   }
 
+  const openModal = async (movieId) => {
+    setError(null)
+    try {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}`
+      )
+      if (!res.ok) {
+        throw new Error("Failed to fetch movie details")
+      }
+      const data = await res.json()
+      setSelectedMovie(data)
+    } catch (err) {
+      setError("Failed to fetch movie details.")
+    }
+  }
+
+  const closeModal = () => setSelectedMovie(null)
+
   const toggleFavorite = (movie) => {
     const exists = favorites.some((f) => f.id === movie.id);
     if (exists) {
@@ -149,11 +168,18 @@ function App() {
           {view === "favorites" ? "Add some to your favorites!" : "Try a different search."}
         </div>
       )}
+
       {!loading && !error && displayedMovies.length > 0 && (
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
           {displayedMovies.map((movie) => (
             <MovieCard key={movie.id} movie={movie} onToggleFavorite={toggleFavorite} isFavorite={isFavorite(movie.id)} />
           ))}
+        </div>
+      )}
+
+      {selectedMovie && (
+        <div>
+          <MovieDetails movie={selectedMovie} onClose={closeModal} isFavorite={isFavorite(selectedMovie.id)} onToggleFavorite={toggleFavorite(selectedMovie)} />
         </div>
       )}
     </div>
