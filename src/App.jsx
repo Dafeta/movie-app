@@ -181,11 +181,15 @@ function App() {
         </div>
       )}
 
+      {view === "search" && totalPages > 1 && !loading && !error (
+        
+      )}
+
       {selectedMovie && (
         <div>
           <MovieDetails 
           movie={selectedMovie} 
-          onClose={closeModal} 
+          onCloseModal={closeModal} 
           isFavorite={isFavorite(selectedMovie.id)} onToggleFavorite={() => toggleFavorite(selectedMovie)} />
         </div>
       )}
