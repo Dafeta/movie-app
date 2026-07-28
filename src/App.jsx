@@ -4,6 +4,7 @@ import Spinner from "./components/Spinner";
 import ErrorMessage from "./components/ErrorMessage";
 import MovieCard from "./components/MovieCard";
 import MovieDetails from "./components/MovieDetails";
+import Pagination from "./components/Pagination";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -92,6 +93,12 @@ function App() {
     setPage(1);
   }
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage)
+    }
+  }
+
   const openModal = async (movieId) => {
     setError(null)
     try {
@@ -139,7 +146,7 @@ function App() {
           <a className={`tab text-lg text-white ${view === "search" ? "tab-active" : ""}`}
             onClick={() => {
               setView("search");
-              setPage(1);
+              setPage(page);
             }}
           >
             Search
@@ -181,8 +188,13 @@ function App() {
         </div>
       )}
 
-      {view === "search" && totalPages > 1 && !loading && !error (
-        
+      {view === "search" && totalPages > 1 && !loading && !error && (
+        <div>
+          <Pagination 
+          currentPage={page} 
+          totalPages={totalPages} 
+          onPageChange={handlePageChange} />
+        </div>
       )}
 
       {selectedMovie && (
