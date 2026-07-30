@@ -8,8 +8,13 @@ import Pagination from "./components/Pagination";
 
 function App() {
   const [movies, setMovies] = useState([]);
-  const [favorites, setFavorites] = useState([]);
-  const [initialized, setInitialized] = useState(false);
+  const [favorites, setFavorites] = useState(() => {
+    if (typeof window !== "undefined") {
+      return JSON.parse(localStorage.getItem("favorites")) || [];
+    }
+    return [];
+  });
+  // const [initialized, setInitialized] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -22,23 +27,17 @@ function App() {
 
   // Load favorites from local storage
   useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    setFavorites(storedFavorites);
-    setInitialized(true);
-  }, []);
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
 
   // Set favorites to local storage
-  useEffect (() => {
-    if (initialized) {
-      localStorage.setItem("favorites", JSON.stringify(favorites));
-    }
-  }, [favorites, initialized]);
+  // useEffect (() => {
+  //   if (initialized) {
+  //     localStorage.setItem("favorites", JSON.stringify(favorites));
+  //   }
+  // }, [favorites, initialized]);
 
   useEffect(() => {
-    // console.log(Object.keys(import.meta.env));
-    // console.log(import.meta.env.VITE_TMDB_API_KEY);
-    // console.log(import.meta.env.VITE_TMDB_ACCESS_TOKEN);
-    // console.log(import.meta.env);
     if (view === "favorites") {
       setMovies([]);
       return;
@@ -76,9 +75,9 @@ function App() {
         const data = await res.json();
         console.log(data);
         setMovies(data.results);
-        setTotalPages(Math.min(data.total_pages || 0, 500)); //TMDB API max page limit
+        setTotalPages(Math.min(data.total_pages || 0, 500)); 
       }
-      catch (err) {
+      catch (error) {
         setError("Failed to fetch movies.");
       }
       finally {
@@ -110,7 +109,7 @@ function App() {
       }
       const data = await res.json()
       setSelectedMovie(data)
-    } catch (err) {
+    } catch (error) {
       setError("Failed to fetch movie details.")
     }
   }
@@ -140,7 +139,7 @@ function App() {
 
   return (
     <div className=" mx-auto p-4 flex flex-col items-center text-center bg-blue-950 h-full">
-      <nav className="flex flex-col md:flex-row items-center justify-between w-full md:mb-6">
+      <nav className="flex flex-col md:flex-row items-center justify-between w-full md:mb-4">
         <h1 className="text-2xl md:text-4xl text-white font-extrabold mb-4 md:mb-0 drop-shadow-2xl justify-center items-center">Movie Hub</h1>
         <div className="tabs tabs-border text-center">
           <a className={`tab text-lg text-white ${view === "search" ? "tab-active" : ""}`}
