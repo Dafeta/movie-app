@@ -14,7 +14,6 @@ function App() {
     }
     return [];
   });
-  // const [initialized, setInitialized] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -25,23 +24,16 @@ function App() {
 
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY
 
-  // Load favorites from local storage
+  // Load and Set favorites from local storage
   useEffect(() => {
     localStorage.setItem("favorites", JSON.stringify(favorites));
   }, [favorites]);
 
-  // Set favorites to local storage
-  // useEffect (() => {
-  //   if (initialized) {
-  //     localStorage.setItem("favorites", JSON.stringify(favorites));
-  //   }
-  // }, [favorites, initialized]);
-
   useEffect(() => {
-    if (view === "favorites") {
-      setMovies([]);
-      return;
-    }
+    // if (view === "favorites") {
+    //   setMovies([]);
+    //   return;
+    // }
 
     const fetchMovies = async () => {
       setLoading(true);
@@ -56,20 +48,6 @@ function App() {
           url = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&page=${page}`;
         }
         const res = await fetch(url);
-
-        // const res = await fetch(url, {
-        //   headers: {
-        //     'Content-Type': "application/json",
-        //   },
-        // } 
-        // -----------------------------------
-        // {
-        //   headers: {
-        //     Authorization: `Bearer ${import.meta.env.VITE_TMDB_ACCESS_TOKEN}`,
-        //     'Content-Type': 'application/json'
-        //   }
-        // }
-        // );
         
         if (!res.ok) throw new Error("Failed to fetch movies");
         const data = await res.json();
@@ -77,7 +55,7 @@ function App() {
         setMovies(data.results);
         setTotalPages(Math.min(data.total_pages || 0, 500)); 
       }
-      catch (error) {
+      catch {
         setError("Failed to fetch movies.");
       }
       finally {
@@ -109,7 +87,7 @@ function App() {
       }
       const data = await res.json()
       setSelectedMovie(data)
-    } catch (error) {
+    } catch {
       setError("Failed to fetch movie details.")
     }
   }
@@ -129,7 +107,7 @@ function App() {
         overview: movie.overview,
         vote_average: movie.vote_average
       };
-      setFavorites([...favorites, favMovie])
+      setFavorites([favMovie, ...favorites])
     }
   }
 
